@@ -1,0 +1,10 @@
+<div class="inner-container">
+  <article>
+    <form [formGroup]="form" (submit)="onSubmit()">
+      <label>Word</label>
+      <input type="text" formControlName="value" />
+
+      <button [disabled]="form.invalid">Send</button>
+    </form>
+  </article>
+</div>
