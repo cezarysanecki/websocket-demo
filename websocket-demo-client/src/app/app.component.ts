@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {RepeatableService} from "./repeatable.service";
 import {RepeatResponse, SaveToRepeatRequest} from "./app.component.type";
 
@@ -7,7 +7,7 @@ import {RepeatResponse, SaveToRepeatRequest} from "./app.component.type";
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
 
   newRequest: SaveToRepeatRequest = {value: ''};
 
@@ -16,9 +16,14 @@ export class AppComponent implements OnInit {
   constructor(private service: RepeatableService) {
   }
 
-  ngOnInit(): void {
+  connect(): void {
+    this.service.connect();
     this.service.getRepeatResponse()
       .subscribe(repeatResponse => this.repeatResponses.push(repeatResponse));
+  }
+
+  disconnect(): void {
+    this.service.disconnect();
   }
 
   createRequest(request: SaveToRepeatRequest): void {

@@ -1,4 +1,6 @@
 <h1>Save new word</h1>
+<button (click)="connect()">Connect</button>
+<button (click)="disconnect()">Disconnect</button>
 <app-save-word-to-repeat [request]="newRequest" (onRequest)="createRequest($event)"></app-save-word-to-repeat>
 <ul>
   <li *ngFor="let response of repeatResponses; let i = index">

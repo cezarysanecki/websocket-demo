@@ -4,7 +4,9 @@
 
 export const environment = {
   production: false,
-  apiWebsocket: 'http://localhost:8080/websocket'
+  apiWebsocket: 'http://localhost:8080/websocket',
+  requestEndpoint: '/count-app/save-word',
+  topicEndpoint: '/topic/repeat'
 };
 
 /*
