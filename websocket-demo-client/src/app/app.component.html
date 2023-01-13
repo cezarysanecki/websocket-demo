@@ -1,2 +1,7 @@
 <h1>Save new word</h1>
 <app-save-word-to-repeat [request]="newRequest" (onRequest)="createRequest($event)"></app-save-word-to-repeat>
+<ul>
+  <li *ngFor="let response of repeatResponses; let i = index">
+    {{i}} {{response.content}} {{response.numberOfRepetitions}}
+  </li>
+</ul>

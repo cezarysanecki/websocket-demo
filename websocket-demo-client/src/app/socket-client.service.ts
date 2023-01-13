@@ -1,21 +1,20 @@
 import {Injectable, OnDestroy} from '@angular/core';
-import {Client, Message, over} from "stompjs";
 import {BehaviorSubject, filter, first, Observable, switchMap} from "rxjs";
 import {SocketClientState} from "./app.connection-state-enum";
 import * as SockJS from "sockjs-client";
-import {environment} from "../environments/environment";
-import {StompSubscription} from "@stomp/stompjs";
+import {Message} from "stompjs";
+import {CompatClient, Stomp, StompSubscription} from "@stomp/stompjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class SocketClientService implements OnDestroy {
 
-  private readonly client: Client;
+  private readonly client: CompatClient;
   private state: BehaviorSubject<SocketClientState>;
 
   constructor() {
-    this.client = over(new SockJS(environment.apiWebsocket));
+    this.client = Stomp.over(new SockJS('http://localhost:8080/websocket'));
     this.state = new BehaviorSubject<SocketClientState>(SocketClientState.ATTEMPTING);
     this.client.connect({}, () => {
       this.state.next(SocketClientState.CONNECTED);
@@ -50,8 +49,8 @@ export class SocketClientService implements OnDestroy {
       .subscribe(client => client.send(topic, {}, JSON.stringify(payload)));
   }
 
-  private connect(): Observable<Client> {
-    return new Observable<Client>(observer => {
+  private connect(): Observable<CompatClient> {
+    return new Observable<CompatClient>(observer => {
       this.state.pipe(filter(state => state === SocketClientState.CONNECTED)).subscribe(() => {
         observer.next(this.client);
       });
