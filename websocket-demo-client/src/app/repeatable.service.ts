@@ -25,7 +25,6 @@ export class RepeatableService {
   }
 
   getRepeatResponse(): Observable<RepeatResponse> {
-    this.socketClient.onMessage(environment.topicEndpoint);
-    return new Observable<RepeatResponse>();
+    return this.socketClient.onMessage(environment.topicEndpoint);
   }
 }

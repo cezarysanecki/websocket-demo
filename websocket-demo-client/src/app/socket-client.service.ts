@@ -1,7 +1,7 @@
 import {Injectable, OnDestroy} from '@angular/core';
 import {Client, StompSubscription} from "@stomp/stompjs";
 import * as SockJS from "sockjs-client";
-import {BehaviorSubject, filter, first} from "rxjs";
+import {BehaviorSubject, filter, first, Observable, switchMap} from "rxjs";
 import {SocketClientState} from "./app.connection-state-enum";
 
 @Injectable({
@@ -36,27 +36,30 @@ export class SocketClientService implements OnDestroy {
   }
 
   send(topic: string, payload: any): void {
+    if (!this.currentSubscription) {
+      return;
+    }
+    console.log(topic)
+    console.log(payload);
     this.client?.publish({
       destination: topic,
       body: payload
     })
   }
 
-  onMessage(topic: string): void {
-    const callback = (message: any) => {
-      if (message.body) {
-        console.log("got message with body " + message.body)
-      } else {
-        console.log("got empty message");
-      }
-    };
-
+  onMessage(topic: string): Observable<any> {
     if (this.currentSubscription) {
-      return;
+      return new Observable<any>();
     }
-    this.connectionState.pipe(filter(state => state === SocketClientState.CONNECTED))
-      .pipe(first())
-      .subscribe(() => this.currentSubscription = this.client?.subscribe(topic, callback));
+    return this.connectionState.pipe(filter(state => state === SocketClientState.CONNECTED))
+      .pipe(first(), switchMap(() => {
+        return new Observable<any>(observer => {
+          this.currentSubscription = this.client?.subscribe(topic, message => {
+            observer.next(JSON.parse(message.body));
+          });
+          return () => this.currentSubscription?.id ? this.client?.unsubscribe(this.currentSubscription?.id) : undefined;
+        });
+      }))
   }
 
   ngOnDestroy(): void {
