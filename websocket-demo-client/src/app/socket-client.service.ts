@@ -1,13 +1,15 @@
 import {Injectable, OnDestroy} from '@angular/core';
-import {Client} from "@stomp/stompjs";
+import {Client, StompSubscription} from "@stomp/stompjs";
 import * as SockJS from "sockjs-client";
-import {BehaviorSubject, filter} from "rxjs";
+import {BehaviorSubject, filter, first} from "rxjs";
 import {SocketClientState} from "./app.connection-state-enum";
 
 @Injectable({
   providedIn: 'root'
 })
 export class SocketClientService implements OnDestroy {
+
+  private currentSubscription: StompSubscription | undefined = undefined;
 
   private connectionState: BehaviorSubject<SocketClientState>;
   private client: Client | null = null;
@@ -28,6 +30,8 @@ export class SocketClientService implements OnDestroy {
   }
 
   disconnect(): void {
+    this.currentSubscription?.unsubscribe();
+    this.currentSubscription = undefined;
     this.client?.deactivate();
   }
 
@@ -41,15 +45,18 @@ export class SocketClientService implements OnDestroy {
   onMessage(topic: string): void {
     const callback = (message: any) => {
       if (message.body) {
-        alert("got message with body " + message.body)
+        console.log("got message with body " + message.body)
       } else {
-        alert("got empty message");
+        console.log("got empty message");
       }
     };
 
-    this.connectionState.pipe(filter(state => state === SocketClientState.CONNECTED)).subscribe(() => {
-      this.client?.subscribe(topic, callback);
-    });
+    if (this.currentSubscription) {
+      return;
+    }
+    this.connectionState.pipe(filter(state => state === SocketClientState.CONNECTED))
+      .pipe(first())
+      .subscribe(() => this.currentSubscription = this.client?.subscribe(topic, callback));
   }
 
   ngOnDestroy(): void {
