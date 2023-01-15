@@ -39,8 +39,6 @@ export class SocketClientService implements OnDestroy {
     if (!this.currentSubscription) {
       return;
     }
-    console.log(topic)
-    console.log(payload);
     this.client?.publish({
       destination: topic,
       body: payload
