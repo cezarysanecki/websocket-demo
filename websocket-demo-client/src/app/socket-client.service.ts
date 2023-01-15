@@ -41,7 +41,7 @@ export class SocketClientService implements OnDestroy {
     }
     this.client?.publish({
       destination: topic,
-      body: payload
+      body: JSON.stringify(payload),
     })
   }
 
