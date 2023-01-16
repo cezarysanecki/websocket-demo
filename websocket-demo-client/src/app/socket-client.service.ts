@@ -9,13 +9,15 @@ import {SocketClientState} from "./app.connection-state-enum";
 })
 export class SocketClientService implements OnDestroy {
 
-  private currentSubscription: StompSubscription | undefined = undefined;
-
+  public connectionState$: Observable<SocketClientState>;
   private connectionState: BehaviorSubject<SocketClientState>;
+
+  private currentSubscription: StompSubscription | undefined = undefined;
   private client: Client | null = null;
 
   constructor() {
     this.connectionState = new BehaviorSubject<SocketClientState>(SocketClientState.ATTEMPTING);
+    this.connectionState$ = this.connectionState.asObservable();
     this.client = new Client({webSocketFactory: () => new SockJS('http://localhost:8080/websocket')});
     this.client.onConnect = () => {
       this.connectionState.next(SocketClientState.CONNECTED);
