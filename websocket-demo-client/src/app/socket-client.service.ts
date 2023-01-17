@@ -3,6 +3,7 @@ import {Client, StompSubscription} from "@stomp/stompjs";
 import * as SockJS from "sockjs-client";
 import {BehaviorSubject, filter, first, Observable, switchMap} from "rxjs";
 import {SocketClientState} from "./app.connection-state-enum";
+import {environment} from "../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class SocketClientService implements OnDestroy {
   constructor() {
     this.connectionState = new BehaviorSubject<SocketClientState>(SocketClientState.ATTEMPTING);
     SocketClientService.connectionState$ = this.connectionState.asObservable();
-    this.client = new Client({webSocketFactory: () => new SockJS('http://localhost:8080/websocket')});
+    this.client = new Client({webSocketFactory: () => new SockJS(environment.apiWebsocket)});
     this.client.onConnect = () => {
       this.connectionState.next(SocketClientState.CONNECTED);
     };
