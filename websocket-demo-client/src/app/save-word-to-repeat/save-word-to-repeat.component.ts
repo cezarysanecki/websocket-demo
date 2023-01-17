@@ -27,6 +27,7 @@ export class SaveWordToRepeatComponent implements OnChanges {
 
   onSubmit(): void {
     this.onRequest.emit({value: this.form.controls['value'].value});
+    this.form.reset();
   }
 
 }
