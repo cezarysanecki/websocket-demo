@@ -6,6 +6,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -19,6 +20,7 @@ class RepeatController {
   private SimpMessagingTemplate simpMessagingTemplate;
 
   @MessageMapping("/save-word")
+  @PostMapping
   ResponseEntity<Void> saveWordToRepeat(RepeatWord repeatWord) {
     assignNewWord(repeatWord);
     resetCounter();
@@ -27,7 +29,9 @@ class RepeatController {
 
   @Scheduled(fixedRate = 2_000)
   void repeat() {
-    RepeatResponse response = new RepeatResponse(SAVED_WORD_TO_REPEAT.value(), COUNTER.getAndIncrement());
+    RepeatResponse response = new RepeatResponse(
+        SAVED_WORD_TO_REPEAT.value(),
+        COUNTER.getAndIncrement());
     simpMessagingTemplate.convertAndSend("/topic/repeat", response);
   }
 
