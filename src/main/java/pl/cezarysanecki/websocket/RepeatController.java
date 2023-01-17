@@ -27,9 +27,7 @@ class RepeatController {
 
   @Scheduled(fixedRate = 2000)
   void repeat() {
-    String content = String.format("Word: %s", SAVED_WORD_TO_REPEAT.value());
-    RepeatResponse response = new RepeatResponse(content, COUNTER.getAndIncrement());
-
+    RepeatResponse response = new RepeatResponse(SAVED_WORD_TO_REPEAT.value(), COUNTER.getAndIncrement());
     simpMessagingTemplate.convertAndSend("/topic/repeat", response);
   }
 
