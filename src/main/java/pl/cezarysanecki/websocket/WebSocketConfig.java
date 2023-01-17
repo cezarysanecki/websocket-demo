@@ -12,9 +12,9 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableConfigurationProperties(WebSocketProperties.class)
 @EnableScheduling
 @EnableWebSocketMessageBroker
-public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-  private WebSocketProperties properties;
+  private final WebSocketProperties properties;
 
   WebSocketConfig(WebSocketProperties properties) {
     this.properties = properties;
@@ -31,7 +31,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     registry.addEndpoint("/websocket")
         .setAllowedOriginPatterns(properties.getAllowedOrigins())
         .withSockJS()
-        .setHeartbeatTime(100);
+        .setHeartbeatTime(1_000);
   }
 }
 

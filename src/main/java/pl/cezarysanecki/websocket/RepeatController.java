@@ -25,7 +25,7 @@ class RepeatController {
     return ResponseEntity.ok().build();
   }
 
-  @Scheduled(fixedRate = 2000)
+  @Scheduled(fixedRate = 2_000)
   void repeat() {
     RepeatResponse response = new RepeatResponse(SAVED_WORD_TO_REPEAT.value(), COUNTER.getAndIncrement());
     simpMessagingTemplate.convertAndSend("/topic/repeat", response);
