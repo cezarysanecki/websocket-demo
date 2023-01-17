@@ -1,10 +1,10 @@
 <div class="inner-container">
   <article>
     <form [formGroup]="form" (submit)="onSubmit()">
-      <label>Word</label>
+      <label>Word to send: </label>
       <input type="text" formControlName="value" />
 
-      <button [disabled]="form.invalid">Send</button>
+      <button [disabled]="form.invalid || form.disabled">Send</button>
     </form>
   </article>
 </div>

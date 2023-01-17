@@ -1,28 +1,27 @@
-import {Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
+import {Component, EventEmitter, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {SaveToRepeatRequest} from "../app.component.type";
+import {SocketClientState} from "../app.connection-state-enum";
+import {SocketClientService} from "../socket-client.service";
 
 @Component({
   selector: 'app-save-word-to-repeat',
   templateUrl: './save-word-to-repeat.component.html',
   styleUrls: ['./save-word-to-repeat.component.css']
 })
-export class SaveWordToRepeatComponent implements OnChanges {
+export class SaveWordToRepeatComponent {
 
   form: FormGroup = this.formBuilder.group({
     value: ['', Validators.required]
   });
 
-  @Input()
-  request: SaveToRepeatRequest | null = null;
   @Output()
   onRequest: EventEmitter<any> = new EventEmitter();
 
   constructor(private formBuilder: FormBuilder) {
-  }
-
-  ngOnChanges(): void {
-    this.form.controls['value'].setValue(this.request?.value);
+    this.form.disable();
+    SocketClientService.connectionState$.subscribe(state => {
+      state === SocketClientState.CONNECTED ? this.form.enable() : this.form.disable();
+    })
   }
 
   onSubmit(): void {

@@ -1,9 +1,9 @@
 <h1>Save new word</h1>
-<button (click)="connect()">Connect</button>
-<button (click)="disconnect()">Disconnect</button>
-<app-save-word-to-repeat [request]="newRequest" (onRequest)="createRequest($event)"></app-save-word-to-repeat>
+<button [disabled]="webSocketConnected" (click)="connect()">Connect</button>
+<button [disabled]="!webSocketConnected" (click)="disconnect()">Disconnect</button>
+<app-save-word-to-repeat (onRequest)="createRequest($event)"></app-save-word-to-repeat>
 <ul>
   <li *ngFor="let response of repeatResponses; let i = index">
-    {{i}} {{response.content}} {{response.numberOfRepetitions}}
+    {{i + 1}}) word: {{response.content}}, counter: {{response.numberOfRepetitions}}
   </li>
 </ul>

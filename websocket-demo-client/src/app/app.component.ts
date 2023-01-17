@@ -1,6 +1,8 @@
 import {Component} from '@angular/core';
 import {RepeatableService} from "./repeatable.service";
 import {RepeatResponse, SaveToRepeatRequest} from "./app.component.type";
+import {SocketClientService} from "./socket-client.service";
+import {SocketClientState} from "./app.connection-state-enum";
 
 @Component({
   selector: 'app-root',
@@ -9,11 +11,13 @@ import {RepeatResponse, SaveToRepeatRequest} from "./app.component.type";
 })
 export class AppComponent {
 
-  newRequest: SaveToRepeatRequest = {value: ''};
-
+  webSocketConnected: boolean = false;
   repeatResponses: RepeatResponse[] = [];
 
   constructor(private service: RepeatableService) {
+    SocketClientService.connectionState$.subscribe(state => {
+      this.webSocketConnected = state === SocketClientState.CONNECTED;
+    })
   }
 
   connect(): void {
@@ -24,6 +28,7 @@ export class AppComponent {
 
   disconnect(): void {
     this.service.disconnect();
+    this.repeatResponses = [];
   }
 
   createRequest(request: SaveToRepeatRequest): void {
